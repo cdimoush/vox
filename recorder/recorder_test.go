@@ -1,7 +1,6 @@
 package recorder
 
 import (
-	"math"
 	"os/exec"
 	"strings"
 	"testing"
@@ -22,40 +21,40 @@ func TestParseVolume(t *testing.T) {
 		line      string
 		wantLevel float64
 		wantOK    bool
-		tolerance float64
 	}{
 		{
-			name:      "normal dB value",
-			line:      "In:0.00% 00:00:01.23 [  -3.5dB]  Out:...",
-			wantLevel: math.Pow(10, -3.5/20.0),
-			wantOK:    true,
-			tolerance: 0.01,
-		},
-		{
-			name:      "negative infinity",
-			line:      "In:0.00% 00:00:00.00 [ -inf dB]",
+			name:      "silent",
+			line:      "In:0.00% 00:00:00.00 [00:00:00.00] Out:0     [      |      ]        Clip:0",
 			wantLevel: 0.0,
 			wantOK:    true,
-			tolerance: 0.001,
 		},
 		{
-			name:      "zero dB",
-			line:      "[  0.0dB]",
+			name:      "full level",
+			line:      "In:0.00% 00:00:01.23 [00:00:00.00] Out:16.1k [======|======]        Clip:0",
 			wantLevel: 1.0,
 			wantOK:    true,
-			tolerance: 0.001,
 		},
 		{
-			name:   "no brackets",
-			line:   "no brackets here",
+			name:      "half level",
+			line:      "In:0.00% 00:00:01.23 [00:00:00.00] Out:16.1k [===   |===   ]        Clip:0",
+			wantLevel: 0.5,
+			wantOK:    true,
+		},
+		{
+			name:      "one third",
+			line:      "In:0.00% 00:00:01.23 [00:00:00.00] Out:16.1k [==    |==    ]        Clip:0",
+			wantLevel: 1.0 / 3.0,
+			wantOK:    true,
+		},
+		{
+			name:   "no VU meter",
+			line:   "Input File     : 'default' (coreaudio)",
 			wantOK: false,
 		},
 		{
-			name:      "minus 20 dB",
-			line:      "[ -20.0dB]",
-			wantLevel: 0.1,
-			wantOK:    true,
-			tolerance: 0.001,
+			name:   "no pipe in brackets",
+			line:   "[00:00:00.00]",
+			wantOK: false,
 		},
 	}
 
@@ -68,8 +67,12 @@ func TestParseVolume(t *testing.T) {
 			if !ok {
 				return
 			}
-			if math.Abs(level-tt.wantLevel) > tt.tolerance {
-				t.Errorf("parseVolume(%q): got level=%f, want ~%f (±%f)", tt.line, level, tt.wantLevel, tt.tolerance)
+			diff := level - tt.wantLevel
+			if diff < 0 {
+				diff = -diff
+			}
+			if diff > 0.01 {
+				t.Errorf("parseVolume(%q): got level=%f, want ~%f", tt.line, level, tt.wantLevel)
 			}
 		})
 	}

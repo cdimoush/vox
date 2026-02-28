@@ -3,6 +3,7 @@ package recorder
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"fmt"
 	"os"
@@ -30,7 +31,7 @@ func Record(ctx context.Context) (Result, error) {
 	tmpPath := tmpFile.Name()
 	tmpFile.Close()
 
-	cmd := exec.CommandContext(ctx, "rec", "-r", "16000", "-c", "1", "-b", "16", tmpPath)
+	cmd := exec.CommandContext(ctx, "rec", "-S", "-r", "16000", "-c", "1", "-b", "16", tmpPath)
 
 	// Send SIGINT instead of SIGKILL so rec can finalize the WAV header.
 	cmd.Cancel = func() error {
@@ -52,9 +53,10 @@ func Record(ctx context.Context) (Result, error) {
 	}
 
 	// Read stderr in a goroutine to display volume meter.
+	// SoX progress uses \r (not \n) between updates, so we split on both.
 	go func() {
 		scanner := bufio.NewScanner(stderr)
-		scanner.Split(bufio.ScanLines)
+		scanner.Split(scanCRLF)
 		for scanner.Scan() {
 			line := scanner.Text()
 			if level, ok := parseVolume(line); ok {
@@ -71,4 +73,27 @@ func Record(ctx context.Context) (Result, error) {
 	fmt.Fprintln(os.Stderr)
 
 	return Result{FilePath: tmpPath, Duration: elapsed}, nil
+}
+
+// scanCRLF is a bufio.SplitFunc that splits on \n or \r.
+// SoX progress output uses \r between updates and \n for headers.
+func scanCRLF(data []byte, atEOF bool) (advance int, token []byte, err error) {
+	if atEOF && len(data) == 0 {
+		return 0, nil, nil
+	}
+	// Find earliest \r or \n.
+	cr := bytes.IndexByte(data, '\r')
+	lf := bytes.IndexByte(data, '\n')
+
+	switch {
+	case cr >= 0 && (lf < 0 || cr < lf):
+		return cr + 1, data[:cr], nil
+	case lf >= 0:
+		return lf + 1, data[:lf], nil
+	}
+
+	if atEOF {
+		return len(data), data, nil
+	}
+	return 0, nil, nil // request more data
 }
