@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/conner/vox/history"
+	"github.com/cdimoush/vox/history"
 )
 
 func cmdLs() error {

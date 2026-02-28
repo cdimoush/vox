@@ -18,19 +18,23 @@ $
 
 ## Install
 
+```bash
+curl https://i.jpillora.com/cdimoush/vox! | bash
+```
+
 **From source** (requires Go 1.22+):
 
 ```bash
-go install github.com/conner/vox/cmd/vox@latest
+go install github.com/cdimoush/vox/cmd/vox@latest
 ```
 
-**Pre-built binaries**: Download from the [Releases](https://github.com/conner/vox/releases) page.
+**Pre-built binaries**: Download from the [Releases](https://github.com/cdimoush/vox/releases) page.
 
 ## Requirements
 
 | Dependency | Required | Install |
 |---|---|---|
-| **SoX** | Yes | `brew install sox` (macOS) / `sudo apt install sox` (Linux) |
+| **SoX** | For recording | `brew install sox` (macOS) / `sudo apt install sox` (Linux) |
 | **OpenAI API key** | Yes | `export OPENAI_API_KEY=your-key` |
 | **Clipboard tool** | Yes | `pbcopy` (macOS, built-in) / `sudo apt install xsel` (Linux) |
 
@@ -45,6 +49,25 @@ $ vox
 ● Recording... (Enter to stop)
 "Refactor the sensor config to use YAML"
 ✓ Copied to clipboard
+```
+
+### `vox file <path>` — Transcribe an audio file
+
+```bash
+$ vox file memo.m4a
+⠋ Transcribing...
+"Refactor the sensor config to use YAML"
+✓ Copied to clipboard
+```
+
+Transcribes an existing audio file (.wav, .m4a, .mp3, .webm) without recording. Does not require SoX. Raw text is written to stdout for piping:
+
+```bash
+# Save to file
+vox file memo.m4a > transcription.txt
+
+# Capture in a script or agent
+text=$(vox file memo.m4a)
 ```
 
 ### `vox ls` — Show history
@@ -94,6 +117,7 @@ Delete all 47 transcriptions? [y/N] y
 alias v="vox"
 alias vl="vox ls"
 alias vc="vox cp"
+alias vf="vox file"
 ```
 
 Four keystrokes to capture a thought: `v` → speak → Enter → paste.

@@ -10,10 +10,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/conner/vox/clipboard"
-	"github.com/conner/vox/history"
-	"github.com/conner/vox/recorder"
-	"github.com/conner/vox/transcribe"
+	"github.com/cdimoush/vox/clipboard"
+	"github.com/cdimoush/vox/history"
+	"github.com/cdimoush/vox/recorder"
+	"github.com/cdimoush/vox/transcribe"
 )
 
 // spinner frames for the transcription progress indicator.
