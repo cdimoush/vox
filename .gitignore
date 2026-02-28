@@ -1,0 +1,17 @@
+# Binaries
+vox
+*.exe
+dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment
+.env
