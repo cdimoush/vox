@@ -13,6 +13,8 @@ func main() {
 		err = run()
 	} else {
 		switch os.Args[1] {
+		case "file":
+			err = cmdFile()
 		case "ls":
 			err = cmdLs()
 		case "cp":
@@ -25,7 +27,7 @@ func main() {
 			fmt.Println("vox " + version)
 			return
 		default:
-			fmt.Fprintf(os.Stderr, "Unknown command: %s\n\nUsage: vox [ls|cp|show|clear]\n", os.Args[1])
+			fmt.Fprintf(os.Stderr, "Unknown command: %s\n\nUsage: vox [file|ls|cp|show|clear]\n", os.Args[1])
 			os.Exit(1)
 		}
 	}

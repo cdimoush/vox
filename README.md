@@ -34,7 +34,7 @@ go install github.com/cdimoush/vox/cmd/vox@latest
 
 | Dependency | Required | Install |
 |---|---|---|
-| **SoX** | Yes | `brew install sox` (macOS) / `sudo apt install sox` (Linux) |
+| **SoX** | For recording | `brew install sox` (macOS) / `sudo apt install sox` (Linux) |
 | **OpenAI API key** | Yes | `export OPENAI_API_KEY=your-key` |
 | **Clipboard tool** | Yes | `pbcopy` (macOS, built-in) / `sudo apt install xsel` (Linux) |
 
@@ -50,6 +50,17 @@ $ vox
 "Refactor the sensor config to use YAML"
 ✓ Copied to clipboard
 ```
+
+### `vox file <path>` — Transcribe an audio file
+
+```bash
+$ vox file memo.m4a
+⠋ Transcribing...
+"Refactor the sensor config to use YAML"
+✓ Copied to clipboard
+```
+
+Transcribes an existing audio file (.wav, .m4a, .mp3, .webm) without recording. Does not require SoX.
 
 ### `vox ls` — Show history
 
@@ -98,6 +109,7 @@ Delete all 47 transcriptions? [y/N] y
 alias v="vox"
 alias vl="vox ls"
 alias vc="vox cp"
+alias vf="vox file"
 ```
 
 Four keystrokes to capture a thought: `v` → speak → Enter → paste.
