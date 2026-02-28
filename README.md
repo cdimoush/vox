@@ -18,13 +18,17 @@ $
 
 ## Install
 
+```bash
+curl https://i.jpillora.com/cdimoush/vox! | bash
+```
+
 **From source** (requires Go 1.22+):
 
 ```bash
-go install github.com/conner/vox/cmd/vox@latest
+go install github.com/cdimoush/vox/cmd/vox@latest
 ```
 
-**Pre-built binaries**: Download from the [Releases](https://github.com/conner/vox/releases) page.
+**Pre-built binaries**: Download from the [Releases](https://github.com/cdimoush/vox/releases) page.
 
 ## Requirements
 

@@ -5,8 +5,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/conner/vox/clipboard"
-	"github.com/conner/vox/history"
+	"github.com/cdimoush/vox/clipboard"
+	"github.com/cdimoush/vox/history"
 )
 
 func cmdCp() error {
