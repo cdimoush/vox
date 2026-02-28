@@ -76,9 +76,15 @@ func cmdFile() error {
 		return fmt.Errorf("transcription failed: %w", err)
 	}
 
-	fmt.Fprintf(os.Stderr, "\n\"%s\"\n\n", strings.TrimSpace(text))
+	trimmed := strings.TrimSpace(text)
 
-	if err := clipboard.Write(strings.TrimSpace(text)); err != nil {
+	// Raw text to stdout for piping: vox file memo.m4a > out.txt
+	fmt.Fprintln(os.Stdout, trimmed)
+
+	// UI feedback to stderr.
+	fmt.Fprintf(os.Stderr, "\n\"%s\"\n\n", trimmed)
+
+	if err := clipboard.Write(trimmed); err != nil {
 		return fmt.Errorf("clipboard: %w", err)
 	}
 	fmt.Fprintln(os.Stderr, "✓ Copied to clipboard")

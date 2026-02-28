@@ -60,7 +60,15 @@ $ vox file memo.m4a
 ✓ Copied to clipboard
 ```
 
-Transcribes an existing audio file (.wav, .m4a, .mp3, .webm) without recording. Does not require SoX.
+Transcribes an existing audio file (.wav, .m4a, .mp3, .webm) without recording. Does not require SoX. Raw text is written to stdout for piping:
+
+```bash
+# Save to file
+vox file memo.m4a > transcription.txt
+
+# Capture in a script or agent
+text=$(vox file memo.m4a)
+```
 
 ### `vox ls` — Show history
 
