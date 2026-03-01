@@ -8,7 +8,7 @@ import (
 	"github.com/cdimoush/vox/transcribe"
 )
 
-const version = "v0.1.0-dev"
+const version = "v0.1.1"
 
 func main() {
 	var err error
