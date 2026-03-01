@@ -3,7 +3,9 @@ package clipboard
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 )
 
@@ -12,12 +14,24 @@ import (
 // in that order, returning the first one found.
 func Detect() (string, error) {
 	for _, tool := range []string{"pbcopy", "xsel", "xclip"} {
-		if path, err := exec.LookPath(tool); err == nil {
-			_ = path
+		if _, err := exec.LookPath(tool); err == nil {
 			return tool, nil
 		}
 	}
 	return "", fmt.Errorf("no clipboard tool found\n\nInstall with:\n  macOS:  pbcopy is built-in\n  Linux:  sudo apt-get install xsel")
+}
+
+// Available reports whether clipboard copy is likely to work.
+// Returns false on headless Linux (no DISPLAY or WAYLAND_DISPLAY)
+// or when no clipboard tool is installed.
+func Available() bool {
+	if runtime.GOOS == "linux" {
+		if os.Getenv("DISPLAY") == "" && os.Getenv("WAYLAND_DISPLAY") == "" {
+			return false
+		}
+	}
+	_, err := Detect()
+	return err == nil
 }
 
 // Write copies text to the system clipboard using the detected clipboard tool.

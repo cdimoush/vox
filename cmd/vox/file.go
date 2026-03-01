@@ -81,12 +81,6 @@ func cmdFile() error {
 		return wrapErr(jsonMode, transcribe.ErrNoAPIKey)
 	}
 
-	if !jsonMode {
-		if _, err := clipboard.Detect(); err != nil {
-			return err
-		}
-	}
-
 	// Ctrl+C aborts transcription.
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -156,10 +150,14 @@ func cmdFile() error {
 	fmt.Fprintln(os.Stdout, trimmed)
 	fmt.Fprintf(os.Stderr, "\n\"%s\"\n\n", trimmed)
 
-	if err := clipboard.Write(trimmed); err != nil {
-		return fmt.Errorf("clipboard: %w", err)
+	// Copy to clipboard (best-effort).
+	if clipboard.Available() {
+		if err := clipboard.Write(trimmed); err != nil {
+			fmt.Fprintf(os.Stderr, "⚠ Clipboard unavailable: %v\n", err)
+		} else {
+			fmt.Fprintln(os.Stderr, "✓ Copied to clipboard")
+		}
 	}
-	fmt.Fprintln(os.Stderr, "✓ Copied to clipboard")
 
 	store := history.NewStore(history.DefaultPath())
 	entry := history.Entry{
