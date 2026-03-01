@@ -27,10 +27,6 @@ func run() error {
 	if _, err := exec.LookPath("rec"); err != nil {
 		return fmt.Errorf("rec (SoX) not found\n\nInstall with:\n  macOS:  brew install sox\n  Linux:  sudo apt-get install sox")
 	}
-	if _, err := clipboard.Detect(); err != nil {
-		return err
-	}
-
 	// Set up two-phase signal handling:
 	// Phase 1: Ctrl+C during recording stops recording → proceed to transcription
 	// Phase 2: Ctrl+C during transcription aborts
@@ -111,11 +107,14 @@ func run() error {
 	// Print transcribed text in quotes.
 	fmt.Fprintf(os.Stderr, "\n\"%s\"\n\n", strings.TrimSpace(text))
 
-	// Copy to clipboard.
-	if err := clipboard.Write(strings.TrimSpace(text)); err != nil {
-		return fmt.Errorf("clipboard: %w", err)
+	// Copy to clipboard (best-effort).
+	if clipboard.Available() {
+		if err := clipboard.Write(strings.TrimSpace(text)); err != nil {
+			fmt.Fprintf(os.Stderr, "⚠ Clipboard unavailable: %v\n", err)
+		} else {
+			fmt.Fprintln(os.Stderr, "✓ Copied to clipboard")
+		}
 	}
-	fmt.Fprintln(os.Stderr, "✓ Copied to clipboard")
 
 	// Save to history. Prefer recorder duration; fall back to API-reported duration.
 	histDuration := result.Duration.Seconds()
