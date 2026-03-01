@@ -100,7 +100,7 @@ func run() error {
 	}()
 
 	// Transcribe.
-	text, err := transcribeWithContext(txCtx, result.FilePath)
+	text, duration, err := transcribeWithContext(txCtx, result.FilePath)
 	close(spinnerDone)
 	spinnerWg.Wait()
 
@@ -117,12 +117,16 @@ func run() error {
 	}
 	fmt.Fprintln(os.Stderr, "✓ Copied to clipboard")
 
-	// Save to history.
+	// Save to history. Prefer recorder duration; fall back to API-reported duration.
+	histDuration := result.Duration.Seconds()
+	if histDuration == 0 {
+		histDuration = duration
+	}
 	store := history.NewStore(history.DefaultPath())
 	entry := history.Entry{
 		Timestamp: time.Now().UTC().Format(time.RFC3339),
 		Text:      strings.TrimSpace(text),
-		DurationS: result.Duration.Seconds(),
+		DurationS: histDuration,
 	}
 	if err := store.Append(entry); err != nil {
 		return fmt.Errorf("saving history: %w", err)
@@ -131,22 +135,24 @@ func run() error {
 	return nil
 }
 
-// transcribeWithContext runs transcription but respects context cancellation.
-func transcribeWithContext(ctx context.Context, filePath string) (string, error) {
+// transcribeWithContext runs transcription, passing the context through
+// to the transcribe package for cancellation support.
+func transcribeWithContext(ctx context.Context, filePath string) (string, float64, error) {
 	type result struct {
-		text string
-		err  error
+		text     string
+		duration float64
+		err      error
 	}
 	ch := make(chan result, 1)
 	go func() {
-		text, err := transcribe.Transcribe(filePath)
-		ch <- result{text, err}
+		text, dur, err := transcribe.Transcribe(ctx, filePath)
+		ch <- result{text, dur, err}
 	}()
 
 	select {
 	case <-ctx.Done():
-		return "", ctx.Err()
+		return "", 0, ctx.Err()
 	case r := <-ch:
-		return r.text, r.err
+		return r.text, r.duration, r.err
 	}
 }
