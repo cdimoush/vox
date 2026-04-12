@@ -35,10 +35,20 @@ go install github.com/cdimoush/vox/cmd/vox@latest
 | Dependency | Required | Install |
 |---|---|---|
 | **SoX** | For recording | `brew install sox` (macOS) / `sudo apt install sox` (Linux) |
-| **OpenAI API key** | Yes | `export OPENAI_API_KEY=your-key` |
+| **OpenAI API key** | Yes | `vox login` — or `export OPENAI_API_KEY=your-key` |
 | **Clipboard tool** | Yes | `pbcopy` (macOS, built-in) / `sudo apt install xsel` (Linux) |
 
 ## Usage
+
+### `vox login` — Set your API key
+
+```bash
+$ vox login
+Enter your OpenAI API key: sk-proj-...
+✓ Key saved to ~/.vox/config
+```
+
+Saves the key to `~/.vox/config`. vox will find it automatically from there, from `OPENAI_API_KEY` in your environment, or from an `export` line in your shell profile — whichever it finds first.
 
 ### `vox` — Record and transcribe
 
@@ -126,7 +136,7 @@ Four keystrokes to capture a thought: `v` → speak → Enter → paste.
 
 vox shells out to SoX `rec` for audio capture, sends the WAV to the OpenAI Whisper API (`gpt-4o-mini-transcribe`), and pipes the result to your platform's clipboard tool. History is stored as append-only JSONL at `~/.vox/history.jsonl`.
 
-No config file. No local transcription. No TUI framework. Just a CLI that runs and exits.
+No local transcription. No TUI framework. Just a CLI that runs and exits.
 
 ## Uninstall
 
