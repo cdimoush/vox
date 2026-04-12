@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/cdimoush/vox/clipboard"
+	"github.com/cdimoush/vox/config"
 	"github.com/cdimoush/vox/history"
 	"github.com/cdimoush/vox/transcribe"
 )
@@ -77,7 +78,7 @@ func cmdFile() error {
 		}
 	}
 
-	if os.Getenv("OPENAI_API_KEY") == "" {
+	if config.FindAPIKey() == "" {
 		return wrapErr(jsonMode, transcribe.ErrNoAPIKey)
 	}
 

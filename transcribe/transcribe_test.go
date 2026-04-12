@@ -8,6 +8,7 @@ import (
 
 func TestTranscribeMissingAPIKey(t *testing.T) {
 	t.Setenv("OPENAI_API_KEY", "")
+	t.Setenv("HOME", t.TempDir()) // prevent fallback to ~/.bashrc or ~/.vox/config
 	_, _, err := Transcribe(context.Background(), "somefile.wav")
 	if !errors.Is(err, ErrNoAPIKey) {
 		t.Fatalf("expected ErrNoAPIKey, got: %v", err)

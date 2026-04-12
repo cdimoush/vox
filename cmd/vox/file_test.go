@@ -40,6 +40,7 @@ func TestCmdFileNonexistentFile(t *testing.T) {
 
 func TestCmdFileMissingAPIKey(t *testing.T) {
 	t.Setenv("OPENAI_API_KEY", "")
+	t.Setenv("HOME", t.TempDir())
 
 	tmpFile, err := os.CreateTemp("", "vox-test-*.wav")
 	if err != nil {
@@ -63,6 +64,7 @@ func TestCmdFileMissingAPIKey(t *testing.T) {
 
 func TestCmdFileMissingAPIKeyJSON(t *testing.T) {
 	t.Setenv("OPENAI_API_KEY", "")
+	t.Setenv("HOME", t.TempDir())
 
 	tmpFile, err := os.CreateTemp("", "vox-test-*.wav")
 	if err != nil {

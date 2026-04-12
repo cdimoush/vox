@@ -7,11 +7,12 @@ import (
 	"os"
 	"strings"
 
+	"github.com/cdimoush/vox/config"
 	openai "github.com/sashabaranov/go-openai"
 )
 
-// ErrNoAPIKey is returned when OPENAI_API_KEY is not set.
-var ErrNoAPIKey = errors.New("OPENAI_API_KEY environment variable not set")
+// ErrNoAPIKey is returned when no API key is found anywhere.
+var ErrNoAPIKey = errors.New("OpenAI API key not found — run: vox login")
 
 // ErrAPI is a sentinel for OpenAI API errors (rate limits, timeouts, server errors).
 var ErrAPI = errors.New("API error")
@@ -21,7 +22,7 @@ var ErrAPI = errors.New("API error")
 // For files longer than 8 minutes, the audio is automatically chunked
 // into 5-minute segments and transcribed sequentially.
 func Transcribe(ctx context.Context, filePath string) (string, float64, error) {
-	apiKey := os.Getenv("OPENAI_API_KEY")
+	apiKey := config.FindAPIKey()
 	if apiKey == "" {
 		return "", 0, ErrNoAPIKey
 	}
