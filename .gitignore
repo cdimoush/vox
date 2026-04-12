@@ -1,5 +1,6 @@
 # Binaries
 /vox
+/vox-dev
 *.exe
 dist/
 
