@@ -26,11 +26,13 @@ func main() {
 			err = cmdShow()
 		case "clear":
 			err = cmdClear()
+		case "login":
+			err = cmdLogin()
 		case "--version", "-v":
 			fmt.Println("vox " + version)
 			return
 		default:
-			fmt.Fprintf(os.Stderr, "Unknown command: %s\n\nUsage: vox [file|ls|cp|show|clear]\n", os.Args[1])
+			fmt.Fprintf(os.Stderr, "Unknown command: %s\n\nUsage: vox [login|file|ls|cp|show|clear]\n", os.Args[1])
 			os.Exit(1)
 		}
 	}

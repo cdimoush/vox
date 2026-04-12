@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/cdimoush/vox/clipboard"
+	"github.com/cdimoush/vox/config"
 	"github.com/cdimoush/vox/history"
 	"github.com/cdimoush/vox/recorder"
 	"github.com/cdimoush/vox/transcribe"
@@ -21,8 +22,8 @@ var spinnerFrames = []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "�
 
 func run() error {
 	// Check dependencies up front.
-	if os.Getenv("OPENAI_API_KEY") == "" {
-		return fmt.Errorf("OPENAI_API_KEY environment variable not set\n\nSet it with:\n  export OPENAI_API_KEY=your-key")
+	if config.FindAPIKey() == "" {
+		return fmt.Errorf("OpenAI API key not found\n\nRun: vox login")
 	}
 	if _, err := exec.LookPath("rec"); err != nil {
 		return fmt.Errorf("rec (SoX) not found\n\nInstall with:\n  macOS:  brew install sox\n  Linux:  sudo apt-get install sox")
