@@ -83,12 +83,13 @@ func cmdUIStart() error {
 	if err := cmd.Start(); err != nil {
 		return fmt.Errorf("fork daemon: %w", err)
 	}
-	// Detach — parent should not wait.
+	// Capture the PID before Release() — Release resets cmd.Process state.
+	pid := cmd.Process.Pid
 	if err := cmd.Process.Release(); err != nil {
 		return err
 	}
 
-	if err := os.WriteFile(pidFile, []byte(strconv.Itoa(cmd.Process.Pid)), 0o600); err != nil {
+	if err := os.WriteFile(pidFile, []byte(strconv.Itoa(pid)), 0o600); err != nil {
 		return fmt.Errorf("write pidfile: %w", err)
 	}
 
@@ -96,7 +97,7 @@ func cmdUIStart() error {
 		return fmt.Errorf("daemon did not come up: %w (see %s)", err, logPath)
 	}
 
-	fmt.Fprintf(os.Stderr, "vox daemon started (pid %d)\n", cmd.Process.Pid)
+	fmt.Fprintf(os.Stderr, "vox daemon started (pid %d)\n", pid)
 	return nil
 }
 
