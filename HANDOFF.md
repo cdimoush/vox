@@ -1,7 +1,11 @@
 # vox UI daemon — agent → human handoff
 
 This PR lands **Phase 1** of the vox UI dictation overlay described in
-[`system-designer/designs/2026-04-12/vox-ui/system-design.md`](../system_designer/designs/2026-04-12/vox-ui/system-design.md).
+[`docs/design/vox-ui/system-design.md`](./docs/design/vox-ui/system-design.md)
+(also: [scope](./docs/design/vox-ui/scope.md),
+[landscape](./docs/design/vox-ui/landscape-synthesis.md),
+[design journal](./docs/design/vox-ui/design-journal.md),
+[research notes](./docs/design/vox-ui/research)).
 
 It is **intentionally incomplete.** The agent built everything that can
 be exercised on a headless server. The remaining work requires a human
