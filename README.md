@@ -120,6 +120,38 @@ Delete all 47 transcriptions? [y/N] y
 ✓ History cleared
 ```
 
+### `vox ui {start|stop|toggle|status|install|uninstall}` — Background daemon *(under construction)*
+
+Experimental global-hotkey dictation overlay. Phase 1 (plumbing) is on
+`main`; Phase 2 (hotkey + overlay + tray + mic level + audio cues) lives on
+`feature/vox-ui-daemon` behind a `ui` build tag. See
+[`HANDOFF.md`](./HANDOFF.md) for the work plan.
+
+#### Running the daemon during development
+
+Only needed while the UI is being built — once it ships, the installer will
+handle this. Until then:
+
+```bash
+# one-time: build with the ui build tag, install the autostart unit
+go build -tags=ui -o ~/bin/vox ./cmd/vox
+~/bin/vox ui install                       # writes systemd/launchd unit
+systemctl --user start vox.service         # Linux — starts now; autostarts on login
+# launchctl load ~/Library/LaunchAgents/com.vox.daemon.plist   # macOS
+
+# daily loop after code changes
+go build -tags=ui -o ~/bin/vox ./cmd/vox && systemctl --user restart vox.service
+
+# verify
+journalctl --user -u vox.service -f        # look for "hotkey registered"
+```
+
+Default hotkey: **Ctrl+Shift+Space** (configurable in `~/.vox/config.toml`
+`[hotkey]`). X11 only — on Wayland, bind `vox ui toggle` in your compositor.
+
+Agents working in this repo can run the `/vox-up` skill to do all of this in
+one step — see `.claude/skills/vox-up/SKILL.md`.
+
 ## Shell Aliases
 
 ```bash
