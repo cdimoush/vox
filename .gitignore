@@ -25,11 +25,15 @@ AGENTS.md
 # Claude Code local settings
 .claude/settings.local.json
 
-# Audio files (never commit)
+# Audio files (never commit, except committed test fixtures)
 *.wav
 *.mp3
 *.m4a
 *.webm
+!testdata/audio/*.wav
+!testdata/audio/*.mp3
+!testdata/audio/*.m4a
+!testdata/audio/*.webm
 
 # User data
 ~/.vox/
