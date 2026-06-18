@@ -120,6 +120,14 @@ Delete all 47 transcriptions? [y/N] y
 ✓ History cleared
 ```
 
+### `vox ui {start|stop|toggle|status}` — Background daemon *(under construction)*
+
+Experimental global-hotkey dictation overlay. The plumbing is in
+(`vox ui start` runs a real record → transcribe → paste pipeline), but
+the display/audio UI (overlay, tray, hotkey registration, audio cues)
+still requires a human with a display + mic to land. See
+[`HANDOFF.md`](./HANDOFF.md) for the work plan.
+
 ## Shell Aliases
 
 ```bash
